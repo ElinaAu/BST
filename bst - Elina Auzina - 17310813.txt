@@ -1,0 +1,42 @@
+emptyBT(tree(nil)).
+
+
+bTree(nil).
+bTree(tree(N,T1,T2)) :- bigger(N, T1), smaller(N, T2),bTree(T1), bTree(T2).
+bigger(_,nil).
+bigger(X, tree(Y,_,_)):- Y=<X .
+smaller(_,nil).
+smaller(X, tree(Y,_,_)):- Y>X.
+
+
+insert(I, nil, tree(I ,nil,nil)).
+insert(I,tree(X,L,R),tree(Y,L1,R)):- I=< X, insert(I,L,L1).
+insert(I,tree(X,L,R),tree(X,L,R1)):- insert(I,R,R1).
+
+preorder(nil, L) :- L \= [], !, fail.
+preorder(T,L):- bTree(T),b_setval('List',L), rPreorder(T).
+rPreorder(nil).
+rPreorder(tree(X,T1,T2)):-check(X),rPreorder(T1), rPreorder(T2).
+check(X):- b_getval('List', [L1|L2]), X is L1, b_setval('List', L2).
+
+
+inorder(nil, L) :- L \= [], !, fail.
+inorder(T,L):- bTree(T),b_setval('List',L), rInOrder(T).
+rInOrder(nil).
+rInOrder(tree(X,T1,T2)):- rInOrder(T1),check(X),  rInOrder(T2).
+
+postorder(nil, L) :- L \= [], !, fail.
+postorder(T,L):- bTree(T),b_setval('List',L), rPostOrder(T).
+rPostOrder(nil).
+rPostOrder(tree(X,T1,T2)):- rPostOrder(T1),  rPostOrder(T2), check(X).
+
+
+search(tree(X,_,_), X).
+search(tree(X,L,_), N):- N=<X, search(L, N).
+search(tree(_,_,R), N):- search(R,N).
+
+
+height(nil,0).
+height(tree(_,Left,Right), X):- height(Left,L2), height(Right,L3),X is max(L2,L3)+1.
+
+
